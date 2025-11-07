@@ -133,7 +133,7 @@
 		z-index: 100;
 		background-color: rgba(0, 0, 0, 0.75);
 		backdrop-filter: blur(20px) saturate(180%);
-		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+		/* border-bottom: 1px solid rgba(255, 255, 255, 0.1); */
 		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 	}
 
@@ -146,7 +146,6 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding-right: 10px;
 		height: 60px;
 	}
 
@@ -171,7 +170,7 @@
 	.user-avatar {
 		all: unset;
 		height: 60px;
-		min-width: 60px;
+		min-width: 70px; /* 60px visual + 10px right padding absorbed from top-bar */
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -195,7 +194,7 @@
 	.header h1 {
 		margin: 0;
 		font-size: 20px;
-		padding-right: 10px;
+		padding-right: 10px; /* Visual alignment fix - text doesn't optically center well in CSS */
 	}
 
 	.status-icons {
@@ -451,11 +450,12 @@
 
 	/* Mobile responsiveness */
 	@media (max-width: 768px) {
-		.top-bar {
-			padding-right: 5px;
-		}
 		.menu-button {
 			width: 50px;
+		}
+
+		.user-avatar {
+			min-width: 65px; /* 60px visual + 5px right padding absorbed from top-bar on mobile */
 		}
 	}
 </style>
