@@ -63,7 +63,8 @@
 		left: 0;
 		right: 0;
 		height: var(--status-bar-height, 0);
-		background-color: var(--bg-primary);
+		backdrop-filter: blur(20px) saturate(180%);
+		background-color: rgba(0, 0, 0, 0.5);
 		z-index: var(--z-header);
 	}
 
