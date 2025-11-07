@@ -1,0 +1,137 @@
+:root {
+  /* System Bar Heights (injected dynamically from Android) */
+  --status-bar-height: 0px;
+  --nav-bar-height: 0px;
+
+  /* UI Transitions */
+  --ui-transition: color 0.2s ease;
+
+  /* Header/Layout Dimensions */
+  --header-height: 60px;
+  --toolbar-height: 50px;
+  --content-padding: 16px;
+  --border-radius: 8px;
+
+  /* Accent Colors */
+  --accent-subdued: #c9851a;   /* Default/inactive state */
+  --accent-active: #ff982a;    /* Hover/active state */
+  --accent-folder: #ebab23;    /* Folder content accent */
+
+  /* Background Colors */
+  --bg-primary: #1a1b1c;
+  --bg-secondary: #262626;
+  --bg-tertiary: #2a2a2a;
+  --bg-quaternary: #323334;
+  --bg-input: #151515;
+  --header-bg-color: #161718;
+
+  /* Text Colors */
+  --text-primary: #fff;
+  --text-subdued: #b7b7b7;
+  --text-muted: #888;
+  --text-disabled: #8c8c8c;
+
+  /* Interactive Colors */
+  --success-color: #279d17;
+  --success-hover: #53ff09;
+  --error-color: #d43737;
+  --error-hover: #ff4444;
+
+  /* Border Colors */
+  --border-color: #343434;
+  --border-light: #333;
+
+  /* Overlay Colors */
+  --overlay-light: rgba(255, 255, 255, 0.1);
+  --overlay-dark: rgba(0, 0, 0, 0.5);
+
+  /* Z-Index Layers */
+  --z-header: 1000;
+  --z-dropdown: 2000;
+  --z-modal: 3000;
+  --z-overlay: 4000;
+}
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 768px) {
+  :root {
+    --header-height: 50px;
+    --toolbar-height: 45px;
+    --content-padding: 12px;
+  }
+}
+
+/* Base Styles */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100dvh;
+  min-height: 100dvh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Box Sizing Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Remove default button styles */
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Remove default input styles */
+input, textarea {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  outline: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Remove default link styles */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Scrollbar Styling (Webkit) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-quaternary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3a3a;
+}
+
+/* Firefox Scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-quaternary) var(--bg-secondary);
+}
