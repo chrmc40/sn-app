@@ -1,11 +1,48 @@
+<script>
+	let drawerOpen = $state(false);
+
+	function toggleDrawer() {
+		drawerOpen = !drawerOpen;
+	}
+
+	function closeDrawer() {
+		drawerOpen = false;
+	}
+</script>
+
 <div class="app-container">
+	<!-- Drawer overlay -->
+	{#if drawerOpen}
+		<div
+			class="drawer-overlay"
+			role="button"
+			tabindex="0"
+			onclick={closeDrawer}
+			onkeydown={(e) => e.key === 'Enter' || e.key === ' ' ? closeDrawer() : null}
+		></div>
+	{/if}
+
+	<!-- Drawer -->
+	<div class="drawer" class:open={drawerOpen}>
+		<div class="drawer-header">
+			<h2>Menu</h2>
+			<button class="close-button" onclick={closeDrawer}>✕</button>
+		</div>
+		<nav class="drawer-nav">
+			<a href="/app">Home</a>
+			<a href="/demo">Component Demo</a>
+		</nav>
+	</div>
+
 	<header class="header">
 		<div class="status-bar-spacer"></div>
 		<div class="top-bar">
-			<button class="menu-button">☰</button>
+			<button class="menu-button" onclick={toggleDrawer}>☰</button>
 			<h1>ScrapeNAS</h1>
 			<div class="status-icons">
-				<button class="user-avatar">A</button>
+				<button class="user-avatar">
+					<span class="avatar-circle">A</span>
+				</button>
 			</div>
 		</div>
 	</header>
@@ -109,7 +146,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding-right: 20px;
+		padding-right: 10px;
 		height: 60px;
 	}
 
@@ -133,6 +170,16 @@
 
 	.user-avatar {
 		all: unset;
+		height: 60px;
+		min-width: 60px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		flex-shrink: 0;
+	}
+
+	.avatar-circle {
 		width: 36px;
 		height: 36px;
 		border-radius: 50%;
@@ -143,8 +190,6 @@
 		justify-content: center;
 		font-weight: 500;
 		font-size: 14px;
-		cursor: pointer;
-		flex-shrink: 0;
 	}
 
 	.header h1 {
@@ -156,10 +201,6 @@
 	.status-icons {
 		display: flex;
 		gap: 10px;
-	}
-
-	.icon {
-		font-size: 20px;
 	}
 
 	.hero {
@@ -251,13 +292,6 @@
 		backdrop-filter: blur(10px);
 	}
 
-	.card.cyan button,
-	.card.green button {
-		background: rgba(0, 0, 0, 0.2);
-		border-color: rgba(0, 0, 0, 0.3);
-		color: #0a0a0a;
-	}
-
 	.stats {
 		display: flex;
 		justify-content: space-around;
@@ -334,10 +368,91 @@
 		color: #888;
 	}
 
+	/* Drawer overlay */
+	.drawer-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+		z-index: 10000;
+		backdrop-filter: blur(2px);
+	}
+
+	/* Drawer */
+	.drawer {
+		position: fixed;
+		top: 0;
+		left: -280px;
+		bottom: 0;
+		width: 280px;
+		background-color: #1a1a1a;
+		z-index: 10001;
+		transition: left 0.3s ease;
+		box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+		padding-top: var(--status-bar-height, 0);
+	}
+
+	.drawer.open {
+		left: 0;
+	}
+
+	.drawer-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 20px;
+		border-bottom: 1px solid #333;
+	}
+
+	.drawer-header h2 {
+		margin: 0;
+		font-size: 24px;
+		color: white;
+	}
+
+	.close-button {
+		all: unset;
+		width: 40px;
+		height: 40px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 24px;
+		cursor: pointer;
+		color: #888;
+		border-radius: 4px;
+	}
+
+	.close-button:hover {
+		background-color: rgba(255, 255, 255, 0.1);
+		color: white;
+	}
+
+	.drawer-nav {
+		display: flex;
+		flex-direction: column;
+		padding: 10px 0;
+	}
+
+	.drawer-nav a {
+		padding: 16px 20px;
+		color: #ccc;
+		text-decoration: none;
+		font-size: 16px;
+		transition: background-color 0.2s ease, color 0.2s ease;
+	}
+
+	.drawer-nav a:hover {
+		background-color: rgba(255, 255, 255, 0.1);
+		color: white;
+	}
+
 	/* Mobile responsiveness */
 	@media (max-width: 768px) {
 		.top-bar {
-			padding-right: 15px;
+			padding-right: 5px;
 		}
 		.menu-button {
 			width: 50px;
