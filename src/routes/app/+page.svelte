@@ -16,7 +16,9 @@
 	<section class="card purple">
 		<h3>Purple Section</h3>
 		<p>This is a vibrant purple card with some dummy content to make it taller and more scrollable.</p>
-		<button>Action Button</button>
+		<a href="/demo">
+			<button>🎨 View Component Demo</button>
+		</a>
 	</section>
 
 	<section class="card cyan">
@@ -82,13 +84,12 @@
 
 <style>
 	.app-container {
-		min-height: 100vh;
-		padding-bottom: 80px;
+		min-height: 100%;
 	}
 
 	.header {
 		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-		padding: calc(var(--status-bar-height) + 20px) 20px 30px;
+		padding: 20px;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -271,7 +272,7 @@
 
 	.footer {
 		background: linear-gradient(135deg, #232526 0%, #414345 100%);
-		padding: 40px 20px calc(var(--nav-bar-height) + 40px);
+		padding: 40px 20px;
 		text-align: center;
 	}
 

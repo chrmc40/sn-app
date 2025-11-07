@@ -1,0 +1,119 @@
+<script lang="ts">
+	import { X } from 'lucide-svelte';
+
+	let {
+		open = $bindable(false),
+		title = '',
+		children
+	} = $props();
+
+	function close() {
+		open = false;
+	}
+
+	function handleBackdropClick(e: MouseEvent) {
+		if (e.target === e.currentTarget) {
+			close();
+		}
+	}
+</script>
+
+{#if open}
+	<div class="modal-backdrop" onclick={handleBackdropClick}>
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2>{title}</h2>
+				<button class="close-btn" onclick={close}>
+					<X size={24} />
+				</button>
+			</div>
+			<div class="modal-body">
+				{@render children?.()}
+			</div>
+		</div>
+	</div>
+{/if}
+
+<style>
+	.modal-backdrop {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0, 0, 0, 0.7);
+		backdrop-filter: blur(4px);
+		z-index: var(--z-modal);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 20px;
+		animation: fadeIn 0.2s ease;
+	}
+
+	@keyframes fadeIn {
+		from { opacity: 0; }
+		to { opacity: 1; }
+	}
+
+	.modal-content {
+		background: var(--bg-secondary);
+		border-radius: var(--border-radius);
+		max-width: 500px;
+		width: 100%;
+		max-height: 80vh;
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+		animation: slideUp 0.3s ease;
+		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+	}
+
+	@keyframes slideUp {
+		from {
+			opacity: 0;
+			transform: translateY(20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.modal-header {
+		padding: 20px;
+		border-bottom: 1px solid var(--border-color);
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		background: var(--bg-tertiary);
+	}
+
+	.modal-header h2 {
+		margin: 0;
+		font-size: 20px;
+		color: var(--text-primary);
+	}
+
+	.close-btn {
+		width: 36px;
+		height: 36px;
+		border-radius: 6px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--text-subdued);
+		transition: var(--ui-transition);
+	}
+
+	.close-btn:hover {
+		background: var(--bg-quaternary);
+		color: var(--text-primary);
+	}
+
+	.modal-body {
+		padding: 20px;
+		overflow-y: auto;
+		color: var(--text-primary);
+	}
+</style>

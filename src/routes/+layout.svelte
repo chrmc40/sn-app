@@ -19,6 +19,7 @@
 
 				document.documentElement.style.setProperty('--status-bar-height', `${statusBarHeight}px`);
 				document.documentElement.style.setProperty('--nav-bar-height', `${navBarHeight}px`);
+
 				console.log('Status bar height (px):', heights.statusBar, '→ CSS px:', statusBarHeight);
 				console.log('Nav bar height (px):', heights.navigationBar, '→ CSS px:', navBarHeight);
 			} catch (error) {
@@ -44,25 +45,32 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<!-- Android status bar overlay -->
-<div class="status-bar-overlay"></div>
+<!-- Android status bar (solid, always at top) -->
+<div class="status-bar"></div>
 
-<!-- Android navigation bar overlay -->
+<!-- Main content area -->
+<div class="content-wrapper">
+	{@render children?.()}
+</div>
+
+<!-- Android navigation bar overlay (frosted glass, on top of content) -->
 <div class="nav-bar-overlay"></div>
 
-{@render children?.()}
-
 <style>
-	.status-bar-overlay {
+	.status-bar {
 		position: fixed;
 		top: 0;
 		left: 0;
 		right: 0;
-		height: var(--status-bar-height);
-		backdrop-filter: blur(20px) saturate(180%);
-		background-color: rgba(0, 0, 0, 0.5);
-		z-index: 9999;
-		pointer-events: none;
+		height: var(--status-bar-height, 0);
+		background-color: var(--bg-primary);
+		z-index: var(--z-header);
+	}
+
+	.content-wrapper {
+		padding-top: var(--status-bar-height, 0);
+		padding-bottom: var(--nav-bar-height, 0);
+		min-height: 100dvh;
 	}
 
 	.nav-bar-overlay {
@@ -70,16 +78,16 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
-		height: var(--nav-bar-height);
+		height: var(--nav-bar-height, 0);
 		backdrop-filter: blur(20px) saturate(180%);
 		background-color: rgba(0, 0, 0, 0.5);
 		z-index: 9999;
 		pointer-events: none;
 	}
 
-	/* Hide on web (when height is 0) */
+	/* Hide on web */
 	@media (hover: hover) and (pointer: fine) {
-		.status-bar-overlay,
+		.status-bar,
 		.nav-bar-overlay {
 			display: none;
 		}

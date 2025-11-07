@@ -26,6 +26,7 @@
 		"@capacitor/app": "^7.1.0",
 		"@capacitor/cli": "^7.4.4",
 		"@capacitor/core": "^7.4.4",
+		"lucide-svelte": "^0.553.0",
 		"patch-package": "^8.0.1"
 	}
 }
