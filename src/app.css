@@ -111,27 +111,41 @@ a {
   text-decoration: none;
 }
 
-/* Scrollbar Styling (Webkit) */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+/* Scrollbar Styling */
+/* Hide scrollbars on mobile, show on desktop */
+@media (hover: none) and (pointer: coarse) {
+  /* Mobile: hide scrollbars */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
 }
 
-::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
-}
+@media (hover: hover) and (pointer: fine) {
+  /* Desktop: styled scrollbars */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
 
-::-webkit-scrollbar-thumb {
-  background: var(--bg-quaternary);
-  border-radius: 4px;
-}
+  ::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+  }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #3a3a3a;
-}
+  ::-webkit-scrollbar-thumb {
+    background: var(--bg-quaternary);
+    border-radius: 4px;
+  }
 
-/* Firefox Scrollbar */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--bg-quaternary) var(--bg-secondary);
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3a3a3a;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--bg-quaternary) var(--bg-secondary);
+  }
 }

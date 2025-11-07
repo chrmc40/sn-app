@@ -12,10 +12,15 @@
 		if ((window as any).Capacitor?.isNativePlatform?.()) {
 			try {
 				const heights = await SystemBars.getHeights();
-				document.documentElement.style.setProperty('--status-bar-height', `${heights.statusBar}px`);
-				document.documentElement.style.setProperty('--nav-bar-height', `${heights.navigationBar}px`);
-				console.log('Status bar height:', heights.statusBar);
-				console.log('Nav bar height:', heights.navigationBar);
+				// Convert from physical pixels to CSS pixels using device pixel ratio
+				const dpr = window.devicePixelRatio || 1;
+				const statusBarHeight = heights.statusBar / dpr;
+				const navBarHeight = heights.navigationBar / dpr;
+
+				document.documentElement.style.setProperty('--status-bar-height', `${statusBarHeight}px`);
+				document.documentElement.style.setProperty('--nav-bar-height', `${navBarHeight}px`);
+				console.log('Status bar height (px):', heights.statusBar, '→ CSS px:', statusBarHeight);
+				console.log('Nav bar height (px):', heights.navigationBar, '→ CSS px:', navBarHeight);
 			} catch (error) {
 				console.error('Failed to get system bar heights:', error);
 			}
@@ -39,4 +44,28 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
+<!-- Android status bar overlay -->
+<div class="status-bar-overlay"></div>
+
 {@render children?.()}
+
+<style>
+	.status-bar-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: var(--status-bar-height);
+		backdrop-filter: blur(20px) saturate(180%);
+		background-color: rgba(0, 0, 0, 0.5);
+		z-index: 9999;
+		pointer-events: none;
+	}
+
+	/* Hide on web (when height is 0) */
+	@media (hover: hover) and (pointer: fine) {
+		.status-bar-overlay {
+			display: none;
+		}
+	}
+</style>
