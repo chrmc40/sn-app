@@ -45,19 +45,19 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<!-- Android status bar (solid, always at top) -->
-<div class="status-bar"></div>
+<!-- Android status bar (frosted glass overlay) -->
+<div class="mobile-status-bar"></div>
 
-<!-- Main content area -->
-<div class="content-wrapper">
+<!-- Main app content area -->
+<div class="app-content-area">
 	{@render children?.()}
 </div>
 
-<!-- Android navigation bar overlay (frosted glass, on top of content) -->
-<div class="nav-bar-overlay"></div>
+<!-- Android navigation bar (frosted glass overlay) -->
+<div class="mobile-nav-bar"></div>
 
 <style>
-	.status-bar {
+	.mobile-status-bar {
 		position: fixed;
 		top: 0;
 		left: 0;
@@ -68,13 +68,13 @@
 		z-index: var(--z-header);
 	}
 
-	.content-wrapper {
+	.app-content-area {
 		padding-top: var(--status-bar-height, 0);
 		padding-bottom: var(--nav-bar-height, 0);
 		min-height: 100dvh;
 	}
 
-	.nav-bar-overlay {
+	.mobile-nav-bar {
 		position: fixed;
 		bottom: 0;
 		left: 0;
@@ -88,8 +88,8 @@
 
 	/* Hide on web */
 	@media (hover: hover) and (pointer: fine) {
-		.status-bar,
-		.nav-bar-overlay {
+		.mobile-status-bar,
+		.mobile-nav-bar {
 			display: none;
 		}
 	}
