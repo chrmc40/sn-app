@@ -45,9 +45,6 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<!-- Android status bar (frosted glass overlay) -->
-<div class="mobile-status-bar"></div>
-
 <!-- Main app content area -->
 <div class="app-content-area">
 	{@render children?.()}
@@ -57,17 +54,6 @@
 <div class="mobile-nav-bar"></div>
 
 <style>
-	.mobile-status-bar {
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		height: var(--status-bar-height, 0);
-		backdrop-filter: blur(20px) saturate(180%);
-		background-color: rgba(0, 0, 0, 0.5);
-		z-index: var(--z-header);
-	}
-
 	.app-content-area {
 		padding-top: var(--status-bar-height, 0);
 		padding-bottom: var(--nav-bar-height, 0);
@@ -81,14 +67,13 @@
 		right: 0;
 		height: var(--nav-bar-height, 0);
 		backdrop-filter: blur(20px) saturate(180%);
-		background-color: rgba(0, 0, 0, 0.5);
+		background-color: rgba(0, 0, 0, 0.75);
 		z-index: 9999;
 		pointer-events: none;
 	}
 
 	/* Hide on web */
 	@media (hover: hover) and (pointer: fine) {
-		.mobile-status-bar,
 		.mobile-nav-bar {
 			display: none;
 		}

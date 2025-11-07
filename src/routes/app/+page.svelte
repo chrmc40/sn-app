@@ -1,10 +1,9 @@
 <div class="app-container">
 	<header class="header">
-		<h1>Dark Vibes App</h1>
+		<button class="menu-button">☰</button>
+		<h1>ScrapeNAS</h1>
 		<div class="status-icons">
-			<span class="icon">🔋</span>
-			<span class="icon">📶</span>
-			<span class="icon">🔔</span>
+			<button class="user-avatar">A</button>
 		</div>
 	</header>
 
@@ -88,16 +87,60 @@
 	}
 
 	.header {
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-		padding: 20px;
+		position: sticky;
+		top: 0;
+		background-color: rgba(0, 0, 0, 0.75);
+		backdrop-filter: blur(20px) saturate(180%);
+		padding-top: calc(var(--status-bar-height, 0px));
+		padding-right:20px;
+		margin-top: calc(-1 * var(--status-bar-height, 0));
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		z-index: 100;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+	}
+
+	/* Web only - remove padding and margin when no status bar */
+	@media (hover: hover) and (pointer: fine) {
+		.header {
+			padding-top: 0;
+			margin-top: 0;
+		}
+	}
+
+	.menu-button {
+		all: unset;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 60px;
+		height: 60px;
+		font-size: 24px;
+		cursor: pointer;
+	}
+
+	.user-avatar {
+		all: unset;
+		width: 36px;
+		height: 36px;
+		border-radius: 50%;
+		background-color: #279d17;
+		color: white;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-weight: 500;
+		font-size: 14px;
+		cursor: pointer;
+		flex-shrink: 0;
 	}
 
 	.header h1 {
 		margin: 0;
-		font-size: 24px;
+		font-size: 20px;
+		padding-right: 10px;
 	}
 
 	.status-icons {
@@ -279,5 +322,15 @@
 	.footer p {
 		margin: 0 0 20px 0;
 		color: #888;
+	}
+
+	/* Mobile responsiveness */
+	@media (max-width: 768px) {
+		.header {
+			padding-right: 15px;
+		}
+		.menu-button {
+			width:50px;
+		}
 	}
 </style>
