@@ -1,4 +1,6 @@
 <script>
+	import { onMount, onDestroy } from 'svelte';
+
 	let drawerOpen = $state(false);
 
 	function toggleDrawer() {
@@ -8,6 +10,95 @@
 	function closeDrawer() {
 		drawerOpen = false;
 	}
+
+	// Debug scroll position
+	let headerElement = $state(null);
+	let headerHeight = $state(0);
+	let scrollY = $state(0);
+	let lastScrollY = $state(0);
+	let showDebug = $state(false);
+	let isHeaderFixed = $state(false);
+	let wasHeaderFixed = $state(false);
+	let isHeaderFrosted = $state(false);
+	let isHeaderHidden = $state(true); // Start hidden so when it becomes fixed, it's already hidden
+	let skipTransition = $state(false);
+
+	function handleScroll() {
+		if (typeof window === 'undefined') return;
+
+		const currentScrollY = window.scrollY;
+		const scrollingDown = currentScrollY > lastScrollY;
+		const scrollingUp = currentScrollY < lastScrollY;
+
+		scrollY = currentScrollY;
+		showDebug = scrollY >= headerHeight * 2;
+
+		// Apply frosted effect when scrolled
+		isHeaderFrosted = currentScrollY >= 10;
+
+		// Track if header just became fixed
+		const justBecameFixed = !wasHeaderFixed && currentScrollY >= headerHeight * 2;
+
+		// Switch to fixed when crossing 2x threshold
+		if (currentScrollY >= headerHeight * 2) {
+			// IMPORTANT: Set hidden BEFORE switching to fixed to prevent flash
+			if (justBecameFixed && scrollingDown) {
+				isHeaderHidden = true;
+			}
+
+			isHeaderFixed = true;
+
+			// Disable transition when first becoming fixed to prevent flash
+			if (justBecameFixed) {
+				skipTransition = true;
+				// Re-enable transition after TWO frames (ensures DOM update + paint)
+				requestAnimationFrame(() => {
+					requestAnimationFrame(() => {
+						skipTransition = false;
+					});
+				});
+			}
+		}
+		// Snap back to relative only when at the very top
+		else if (currentScrollY <= 1) {
+			isHeaderFixed = false;
+			isHeaderHidden = false; // Always visible when not fixed
+		}
+
+		// Auto-hide/show logic (only when fixed and not just became fixed)
+		if (isHeaderFixed && !justBecameFixed) {
+			// Scrolling down: hide
+			if (scrollingDown && currentScrollY > 100) {
+				isHeaderHidden = true;
+			}
+			// Scrolling up: show
+			else if (scrollingUp) {
+				isHeaderHidden = false;
+			}
+		} else if (!isHeaderFixed) {
+			// When not fixed, always visible
+			isHeaderHidden = false;
+		}
+
+		wasHeaderFixed = isHeaderFixed;
+		lastScrollY = currentScrollY;
+	}
+
+	onMount(() => {
+		if (headerElement) {
+			headerHeight = headerElement.offsetHeight;
+		}
+		if (typeof window !== 'undefined') {
+			window.addEventListener('scroll', handleScroll, { passive: true });
+			handleScroll();
+		}
+	});
+
+	onDestroy(() => {
+		if (typeof window !== 'undefined') {
+			window.removeEventListener('scroll', handleScroll);
+		}
+	});
 </script>
 
 <div class="app-container">
@@ -70,7 +161,13 @@
 	</div>
 
 	<div class="status-bar-spacer"></div>
-	<header class="header">
+
+	<!-- Spacer to reserve header space when it becomes fixed -->
+	{#if isHeaderFixed}
+		<div class="header-spacer" style="height: {headerHeight}px;"></div>
+	{/if}
+
+	<header class="header" class:header-fixed={isHeaderFixed} class:header-frosted={isHeaderFrosted} class:header-hidden={isHeaderHidden} class:skip-transition={skipTransition} bind:this={headerElement}>
 		<div class="top-bar">
 			<button class="menu-button" onclick={toggleDrawer}>☰</button>
 			<h1>ScrapeNAS</h1>
@@ -99,7 +196,122 @@
 	</header>
 
 	<main class="page-content">
-		<section class="hero">
+
+
+		<section class="card cyan">
+		<h3>Cyan Dreams</h3>
+		<p>Bright cyan section with contrasting dark text. Perfect for testing visibility.</p>
+		<div class="stats">
+			<div class="stat">
+				<div class="number">1.2K</div>
+				<div class="label">Followers</div>
+			</div>
+			<div class="stat">
+				<div class="number">847</div>
+				<div class="label">Following</div>
+			</div>
+			<div class="stat">
+				<div class="number">93</div>
+				<div class="label">Posts</div>
+			</div>
+		</div>
+		</section>
+
+		<section class="card orange">
+			<h3>Orange Energy</h3>
+			<p>Hot orange section bringing the heat. Keep scrolling to see more colors!</p>
+			<div class="progress-bar">
+				<div class="progress" style="width: 65%"></div>
+			</div>
+		</section>
+
+		<section class="card green">
+			<h3>Green Zone</h3>
+			<p>Calming green area for your eyes. Notice how the nav buttons look against different backgrounds.</p>
+			<ul>
+				<li>Item One</li>
+				<li>Item Two</li>
+				<li>Item Three</li>
+				<li>Item Four</li>
+			</ul>
+		</section>
+
+		<section class="card pink">
+			<h3>Pink Paradise</h3>
+			<p>Soft pink vibes. Perfect for testing how system UI elements blend with content.</p>
+			<button>Another Button</button>
+		</section>
+
+		<section class="card blue">
+			<h3>Deep Blue</h3>
+			<p>Dark blue ocean of content. Almost at the bottom now!</p>
+			<div class="chip-container">
+				<span class="chip">Design</span>
+				<span class="chip">Mobile</span>
+				<span class="chip">Android</span>
+				<span class="chip">UI/UX</span>
+			</div>
+		</section>
+
+		
+		<section class="card cyan">
+		<h3>Cyan Dreams</h3>
+		<p>Bright cyan section with contrasting dark text. Perfect for testing visibility.</p>
+		<div class="stats">
+			<div class="stat">
+				<div class="number">1.2K</div>
+				<div class="label">Followers</div>
+			</div>
+			<div class="stat">
+				<div class="number">847</div>
+				<div class="label">Following</div>
+			</div>
+			<div class="stat">
+				<div class="number">93</div>
+				<div class="label">Posts</div>
+			</div>
+		</div>
+		</section>
+
+		<section class="card orange">
+			<h3>Orange Energy</h3>
+			<p>Hot orange section bringing the heat. Keep scrolling to see more colors!</p>
+			<div class="progress-bar">
+				<div class="progress" style="width: 65%"></div>
+			</div>
+		</section>
+
+		<section class="card green">
+			<h3>Green Zone</h3>
+			<p>Calming green area for your eyes. Notice how the nav buttons look against different backgrounds.</p>
+			<ul>
+				<li>Item One</li>
+				<li>Item Two</li>
+				<li>Item Three</li>
+				<li>Item Four</li>
+			</ul>
+		</section>
+
+		<section class="card pink">
+			<h3>Pink Paradise</h3>
+			<p>Soft pink vibes. Perfect for testing how system UI elements blend with content.</p>
+			<button>Another Button</button>
+		</section>
+
+		<section class="card blue">
+			<h3>Deep Blue</h3>
+			<p>Dark blue ocean of content. Almost at the bottom now!</p>
+			<div class="chip-container">
+				<span class="chip">Design</span>
+				<span class="chip">Mobile</span>
+				<span class="chip">Android</span>
+				<span class="chip">UI/UX</span>
+			</div>
+		</section>
+		
+
+
+		<!-- <section class="hero">
 			<h2>Scroll to test overlays</h2>
 			<p>Watch how content flows behind Android system bars</p>
 		</section>
@@ -170,8 +382,13 @@
 		<footer class="footer">
 			<p>Bottom of the page - test nav bar overlay here</p>
 			<button class="footer-btn">Tap Me</button>
-		</footer>
+		</footer> -->
 	</main>
+</div>
+
+<!-- Debug indicator -->
+<div class="debug-box" class:debug-active={showDebug}>
+	scrollY: {Math.round(scrollY)}px
 </div>
 
 <style>
@@ -180,11 +397,8 @@
 	}
 
 	.status-bar-spacer {
-		position: sticky;
-		top: 0;
 		height: var(--status-bar-height, 0px);
 		background-color: #000;
-		z-index: 100;
 	}
 
 	/* Hide status bar spacer on web (desktop) */
@@ -195,10 +409,56 @@
 	}
 
 	.header {
-		background-color: rgba(0, 0, 0, 0.75);
+		position: relative; /* Default: in normal flow */
+	}
+
+	.header:not(.header-fixed) {
+		transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.header-fixed {
+		position: fixed;
+		top: var(--status-bar-height, 0);
+		left: 0;
+		right: 0;
+		z-index: 50;
+		transform: translateY(-100%);
+	}
+
+	.header-fixed:not(.skip-transition) {
+		transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.header-fixed:not(.header-hidden) {
+		transform: translateY(0);
+	}
+
+	.header-hidden {
+		transform: translateY(-100%);
+	}
+
+	.header-frosted {
 		backdrop-filter: blur(20px) saturate(180%);
+		background-color: rgba(22, 23, 24, 0.8);
 		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+	}
+
+	.debug-box {
+		position: fixed;
+		bottom: 20px;
+		right: 20px;
+		background: yellow;
+		color: black;
+		padding: 10px 15px;
+		border-radius: 5px;
+		font-weight: bold;
+		z-index: 9999;
+		font-family: monospace;
+	}
+
+	.debug-box.debug-active {
+		background: red;
+		color: white;
 	}
 
 	.top-bar {
