@@ -6,6 +6,20 @@
 	import { SystemBars } from '$lib/plugins/system-bars';
 
 	let { children } = $props();
+	let isBottomNavHidden = $state(false);
+
+	onMount(async () => {
+		// Listen for bottom nav visibility changes
+		window.addEventListener('bottomNavVisibilityChange', ((e: CustomEvent) => {
+			isBottomNavHidden = e.detail.hidden;
+		}) as EventListener);
+
+		return () => {
+			window.removeEventListener('bottomNavVisibilityChange', ((e: CustomEvent) => {
+				isBottomNavHidden = e.detail.hidden;
+			}) as EventListener);
+		};
+	});
 
 	onMount(async () => {
 		// Get system bar heights and inject as CSS variables
@@ -51,11 +65,11 @@
 </div>
 
 <!-- Android navigation bar (frosted glass overlay) -->
-<div class="mobile-nav-bar"></div>
+<div class="mobile-nav-bar" class:nav-icons-hidden={isBottomNavHidden}></div>
 
 <style>
 	.app-content-area {
-		padding-bottom: var(--nav-bar-height, 0);
+		padding-bottom: calc(56px + var(--nav-bar-height, 0px));
 		min-height: 100dvh;
 	}
 
@@ -64,11 +78,16 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
-		height: var(--nav-bar-height, 0);
+		height: calc(56px + var(--nav-bar-height, 0px));
 		backdrop-filter: blur(20px) saturate(180%);
 		background-color: rgba(0, 0, 0, 0.75);
 		z-index: 9999;
 		pointer-events: none;
+		transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.mobile-nav-bar.nav-icons-hidden {
+		height: var(--nav-bar-height, 0px);
 	}
 
 	/* Hide on web */

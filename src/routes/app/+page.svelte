@@ -20,13 +20,18 @@
 	let isHeaderFrosted = $state(false);
 	let isHeaderHidden = $state(true); // Start hidden so when it becomes fixed, it's already hidden
 	let skipTransition = $state(false);
+	let isBottomNavHidden = $state(false);
+	let headerTranslateY = $state(0);
+	let bottomNavTranslateY = $state(0);
+	let scrollAccumulator = $state(0);
 
 	function handleScroll() {
 		if (typeof window === 'undefined') return;
 
 		const currentScrollY = window.scrollY;
-		const scrollingDown = currentScrollY > lastScrollY;
-		const scrollingUp = currentScrollY < lastScrollY;
+		const scrollDelta = currentScrollY - lastScrollY;
+		const scrollingDown = scrollDelta > 0;
+		const scrollingUp = scrollDelta < 0;
 
 		scrollY = currentScrollY;
 
@@ -40,7 +45,7 @@
 		if (currentScrollY >= headerHeight * 2) {
 			// IMPORTANT: Set hidden BEFORE switching to fixed to prevent flash
 			if (justBecameFixed && scrollingDown) {
-				isHeaderHidden = true;
+				headerTranslateY = -headerHeight;
 			}
 
 			isHeaderFixed = true;
@@ -59,22 +64,33 @@
 		// Snap back to relative only when at the very top
 		else if (currentScrollY <= 1) {
 			isHeaderFixed = false;
-			isHeaderHidden = false; // Always visible when not fixed
+			headerTranslateY = 0;
 		}
 
-		// Auto-hide/show logic (only when fixed and not just became fixed)
-		if (isHeaderFixed && !justBecameFixed) {
-			// Scrolling down: hide
-			if (scrollingDown && currentScrollY > 100) {
-				isHeaderHidden = true;
-			}
-			// Scrolling up: show
-			else if (scrollingUp) {
-				isHeaderHidden = false;
-			}
+		// Elastic scroll behavior for header (only when fixed and scrolled past threshold)
+		if (isHeaderFixed && !justBecameFixed && currentScrollY > 100) {
+			// Accumulate scroll delta
+			headerTranslateY = Math.max(-headerHeight, Math.min(0, headerTranslateY - scrollDelta));
 		} else if (!isHeaderFixed) {
-			// When not fixed, always visible
-			isHeaderHidden = false;
+			headerTranslateY = 0;
+		}
+
+		// Elastic scroll behavior for bottom nav (always active when past threshold)
+		if (currentScrollY > 100) {
+			// Accumulate scroll delta for bottom nav (56px is nav height without Android nav bar)
+			bottomNavTranslateY = Math.max(0, Math.min(56, bottomNavTranslateY + scrollDelta));
+
+			// Snap to fully visible if scrolled back to reveal it
+			if (bottomNavTranslateY <= 0) {
+				bottomNavTranslateY = 0;
+			}
+
+			// Dispatch event for layout overlay
+			const isHidden = bottomNavTranslateY > 28; // Consider hidden if more than halfway
+			window.dispatchEvent(new CustomEvent('bottomNavVisibilityChange', { detail: { hidden: isHidden } }));
+		} else if (currentScrollY <= 1) {
+			bottomNavTranslateY = 0;
+			window.dispatchEvent(new CustomEvent('bottomNavVisibilityChange', { detail: { hidden: false } }));
 		}
 
 		wasHeaderFixed = isHeaderFixed;
@@ -168,7 +184,7 @@
 		<div class="header-spacer" style="height: {headerHeight}px;"></div>
 	{/if}
 
-	<header class="header" class:header-fixed={isHeaderFixed} class:header-frosted={isHeaderFrosted} class:header-hidden={isHeaderHidden} class:skip-transition={skipTransition} bind:this={headerElement}>
+	<header class="header" class:header-fixed={isHeaderFixed} class:header-frosted={isHeaderFrosted} class:skip-transition={skipTransition} bind:this={headerElement} style="--header-translate-y: {headerTranslateY}px">
 		<div class="top-bar">
 			<button class="menu-button" onclick={toggleDrawer}>☰</button>
 			<h1>ScrapeNAS</h1>
@@ -197,120 +213,48 @@
 	</header>
 
 	<main class="page-content">
-
-
-		<section class="card cyan">
-		<h3>Cyan Dreams</h3>
-		<p>Bright cyan section with contrasting dark text. Perfect for testing visibility.</p>
-		<div class="stats">
-			<div class="stat">
-				<div class="number">1.2K</div>
-				<div class="label">Followers</div>
-			</div>
-			<div class="stat">
-				<div class="number">847</div>
-				<div class="label">Following</div>
-			</div>
-			<div class="stat">
-				<div class="number">93</div>
-				<div class="label">Posts</div>
-			</div>
+		<div class="gallery">
+			<div class="gallery-item" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #ff6e7f 0%, #bfe9ff 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #fddb92 0%, #d1fdff 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #c471f5 0%, #fa71cd 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #96fbc4 0%, #f9f586 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #fa8bff 0%, #2bd2ff 90%, #2bff88 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #00d2ff 0%, #3a47d5 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #f78ca0 0%, #f9748f 19%, #fd868c 60%, #fe9a8b 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #08aeea 0%, #2af598 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #ff5858 0%, #f09819 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #3b41c5 0%, #a981bb 49%, #ffc8a9 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #cfd9df 0%, #e2ebf0 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #a6c0fe 0%, #f68084 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);"></div>
+			<div class="gallery-item" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);"></div>
 		</div>
-		</section>
-
-		<section class="card orange">
-			<h3>Orange Energy</h3>
-			<p>Hot orange section bringing the heat. Keep scrolling to see more colors!</p>
-			<div class="progress-bar">
-				<div class="progress" style="width: 65%"></div>
-			</div>
-		</section>
-
-		<section class="card green">
-			<h3>Green Zone</h3>
-			<p>Calming green area for your eyes. Notice how the nav buttons look against different backgrounds.</p>
-			<ul>
-				<li>Item One</li>
-				<li>Item Two</li>
-				<li>Item Three</li>
-				<li>Item Four</li>
-			</ul>
-		</section>
-
-		<section class="card pink">
-			<h3>Pink Paradise</h3>
-			<p>Soft pink vibes. Perfect for testing how system UI elements blend with content.</p>
-			<button>Another Button</button>
-		</section>
-
-		<section class="card blue">
-			<h3>Deep Blue</h3>
-			<p>Dark blue ocean of content. Almost at the bottom now!</p>
-			<div class="chip-container">
-				<span class="chip">Design</span>
-				<span class="chip">Mobile</span>
-				<span class="chip">Android</span>
-				<span class="chip">UI/UX</span>
-			</div>
-		</section>
-
-		
-		<section class="card cyan">
-		<h3>Cyan Dreams</h3>
-		<p>Bright cyan section with contrasting dark text. Perfect for testing visibility.</p>
-		<div class="stats">
-			<div class="stat">
-				<div class="number">1.2K</div>
-				<div class="label">Followers</div>
-			</div>
-			<div class="stat">
-				<div class="number">847</div>
-				<div class="label">Following</div>
-			</div>
-			<div class="stat">
-				<div class="number">93</div>
-				<div class="label">Posts</div>
-			</div>
-		</div>
-		</section>
-
-		<section class="card orange">
-			<h3>Orange Energy</h3>
-			<p>Hot orange section bringing the heat. Keep scrolling to see more colors!</p>
-			<div class="progress-bar">
-				<div class="progress" style="width: 65%"></div>
-			</div>
-		</section>
-
-		<section class="card green">
-			<h3>Green Zone</h3>
-			<p>Calming green area for your eyes. Notice how the nav buttons look against different backgrounds.</p>
-			<ul>
-				<li>Item One</li>
-				<li>Item Two</li>
-				<li>Item Three</li>
-				<li>Item Four</li>
-			</ul>
-		</section>
-
-		<section class="card pink">
-			<h3>Pink Paradise</h3>
-			<p>Soft pink vibes. Perfect for testing how system UI elements blend with content.</p>
-			<button>Another Button</button>
-		</section>
-
-		<section class="card blue">
-			<h3>Deep Blue</h3>
-			<p>Dark blue ocean of content. Almost at the bottom now!</p>
-			<div class="chip-container">
-				<span class="chip">Design</span>
-				<span class="chip">Mobile</span>
-				<span class="chip">Android</span>
-				<span class="chip">UI/UX</span>
-			</div>
-		</section>
-		
-
 
 		<!-- <section class="hero">
 			<h2>Scroll to test overlays</h2>
@@ -385,6 +329,35 @@
 			<button class="footer-btn">Tap Me</button>
 		</footer> -->
 	</main>
+
+	<!-- Bottom Navigation Bar (YouTube style) -->
+	<nav class="bottom-nav" style="--bottom-nav-translate-y: {bottomNavTranslateY}px; --bottom-nav-opacity: {1 - (bottomNavTranslateY / 56)};">
+		<button class="nav-item active">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+				<path d="M9.17 6l2 2H20v10H4V6h5.17M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
+			</svg>
+			<span>Storage</span>
+		</button>
+		<button class="nav-item">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<circle cx="11" cy="11" r="8" />
+				<line x1="21" y1="21" x2="16.65" y2="16.65" />
+			</svg>
+			<span>Search</span>
+		</button>
+		<button class="nav-item">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+			</svg>
+			<span>Latest</span>
+		</button>
+		<button class="nav-item">
+			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+				<path stroke-linecap="round" stroke-linejoin="round" d="M12 13V4M7 14H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2m-1-5-4 5-4-5m9 8h.01"/>
+			</svg>
+			<span>Downloads</span>
+		</button>
+	</nav>
 </div>
 
 <style>
@@ -428,28 +401,22 @@
 		left: 0;
 		right: 0;
 		z-index: 50;
-		transform: translateY(-100%);
+		transform: translateY(var(--header-translate-y, 0));
 	}
 
 	.header-fixed:not(.skip-transition) {
-		transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		transition: transform 0.1s linear;
 	}
 
-	.header-fixed:not(.header-hidden) {
-		transform: translateY(0);
-	}
-
-	.header-hidden {
-		transform: translateY(-100%);
+	.header-frosted {
+		backdrop-filter: blur(20px) saturate(180%);
 	}
 
 	.header-frosted .top-bar {
-		backdrop-filter: blur(20px) saturate(180%);
 		background-color: rgba(22, 23, 24, 0.8) !important;
 	}
 
 	.header-frosted .middle-bar {
-		backdrop-filter: blur(20px) saturate(180%);
 		background-color: rgba(26, 27, 28, 0.8);
 		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 	}
@@ -826,6 +793,83 @@
 	.drawer-nav a:hover {
 		background-color: rgba(255, 255, 255, 0.1);
 		color: white;
+	}
+
+	/* Gallery */
+	.gallery {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+		gap: 12px;
+		padding: 16px;
+	}
+
+	.gallery-item {
+		aspect-ratio: 1;
+		border-radius: 12px;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
+	}
+
+	.gallery-item:active {
+		transform: scale(0.95);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+	}
+
+	/* Bottom Navigation Bar */
+	.bottom-nav {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		height: calc(56px + var(--nav-bar-height, 0px));
+		background-color: transparent;
+		display: flex;
+		justify-content: space-around;
+		align-items: flex-start;
+		padding-top: 8px;
+		padding-bottom: var(--nav-bar-height, 0px);
+		z-index: 10000;
+		transform: translateY(var(--bottom-nav-translate-y, 0));
+		opacity: var(--bottom-nav-opacity, 1);
+		transition: transform 0.1s linear, opacity 0.1s linear;
+	}
+
+	.nav-item {
+		all: unset;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 4px;
+		cursor: pointer;
+		color: #b0b0b0;
+		flex: 1;
+		padding: 4px 0;
+		transition: color 0.2s ease;
+	}
+
+	.nav-item:hover {
+		color: #fff;
+	}
+
+	.nav-item.active {
+		color: #c89cff;
+	}
+
+	.nav-item svg {
+		width: 24px;
+		height: 24px;
+	}
+
+	.nav-item span {
+		font-size: 11px;
+		font-weight: 500;
+	}
+
+	/* Hide bottom nav on desktop */
+	@media (hover: hover) and (pointer: fine) {
+		.bottom-nav {
+			display: none;
+		}
 	}
 
 	/* Mobile responsiveness */
