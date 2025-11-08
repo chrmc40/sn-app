@@ -11,12 +11,10 @@
 		drawerOpen = false;
 	}
 
-	// Debug scroll position
 	let headerElement = $state(null);
 	let headerHeight = $state(0);
 	let scrollY = $state(0);
 	let lastScrollY = $state(0);
-	let showDebug = $state(false);
 	let isHeaderFixed = $state(false);
 	let wasHeaderFixed = $state(false);
 	let isHeaderFrosted = $state(false);
@@ -31,7 +29,6 @@
 		const scrollingUp = currentScrollY < lastScrollY;
 
 		scrollY = currentScrollY;
-		showDebug = scrollY >= headerHeight * 2;
 
 		// Apply frosted effect when scrolled
 		isHeaderFrosted = currentScrollY >= 10;
@@ -390,11 +387,6 @@
 	</main>
 </div>
 
-<!-- Debug indicator -->
-<div class="debug-box" class:debug-active={showDebug}>
-	scrollY: {Math.round(scrollY)}px
-</div>
-
 <style>
 	.app-container {
 		min-height: 100%;
@@ -455,24 +447,6 @@
 		backdrop-filter: blur(20px) saturate(180%);
 		background-color: rgba(22, 23, 24, 0.8);
 		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-	}
-
-	.debug-box {
-		position: fixed;
-		bottom: 20px;
-		right: 20px;
-		background: yellow;
-		color: black;
-		padding: 10px 15px;
-		border-radius: 5px;
-		font-weight: bold;
-		z-index: 9999;
-		font-family: monospace;
-	}
-
-	.debug-box.debug-active {
-		background: red;
-		color: white;
 	}
 
 	.top-bar {
