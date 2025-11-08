@@ -29,70 +29,41 @@
 	let headerHeight = $state(0);
 	let scrollY = $state(0);
 	let lastScrollY = $state(0);
-	let isHeaderFixed = $state(false);
-	let wasHeaderFixed = $state(false);
 	let isHeaderFrosted = $state(false);
-	let isHeaderHidden = $state(true); // Start hidden so when it becomes fixed, it's already hidden
-	let skipTransition = $state(false);
 	let isBottomNavHidden = $state(false);
 	let headerTranslateY = $state(0);
 	let bottomNavTranslateY = $state(0);
-	let scrollAccumulator = $state(0);
 
 	function handleScroll() {
 		if (typeof window === 'undefined') return;
 
 		const currentScrollY = window.scrollY;
 		const scrollDelta = currentScrollY - lastScrollY;
-		const scrollingDown = scrollDelta > 0;
-		const scrollingUp = scrollDelta < 0;
 
 		scrollY = currentScrollY;
 
 		// Apply frosted effect when scrolled past 10px
 		isHeaderFrosted = currentScrollY >= 10;
 
-		// Track if header just became fixed
-		const justBecameFixed = !wasHeaderFixed && currentScrollY >= headerHeight * 2;
+		// Header positioning: always elastic/sticky behavior
+		// Apply scroll delta to current position
+		let newHeaderTranslateY = headerTranslateY - scrollDelta;
 
-		// Switch to fixed when crossing 2x threshold
-		if (currentScrollY >= headerHeight * 2) {
-			// IMPORTANT: Set hidden BEFORE switching to fixed to prevent flash
-			if (justBecameFixed && scrollingDown) {
-				headerTranslateY = -headerHeight;
-			}
-
-			isHeaderFixed = true;
-
-			// Disable transition when first becoming fixed to prevent flash
-			if (justBecameFixed) {
-				skipTransition = true;
-				// Re-enable transition after TWO frames (ensures DOM update + paint)
-				requestAnimationFrame(() => {
-					requestAnimationFrame(() => {
-						skipTransition = false;
-					});
-				});
-			}
-		}
-		// Snap back to relative only when at the very top
-		else if (currentScrollY <= 1) {
-			isHeaderFixed = false;
-			headerTranslateY = 0;
+		// Constrain based on scroll position
+		if (currentScrollY <= headerHeight) {
+			// Near top: header can be anywhere from 0 (visible) to -currentScrollY (scrolled with page)
+			newHeaderTranslateY = Math.max(-currentScrollY, Math.min(0, newHeaderTranslateY));
+		} else {
+			// Past headerHeight: header can be anywhere from 0 (visible) to -headerHeight (fully hidden)
+			newHeaderTranslateY = Math.max(-headerHeight, Math.min(0, newHeaderTranslateY));
 		}
 
-		// Elastic scroll behavior for header (only when fixed and scrolled past threshold)
-		if (isHeaderFixed && !justBecameFixed && currentScrollY > 100) {
-			// Accumulate scroll delta
-			headerTranslateY = Math.max(-headerHeight, Math.min(0, headerTranslateY - scrollDelta));
-		} else if (!isHeaderFixed) {
-			headerTranslateY = 0;
-		}
+		headerTranslateY = newHeaderTranslateY;
 
-		// Elastic scroll behavior for bottom nav (always active when past threshold)
+		// Bottom nav behavior
 		if (currentScrollY > 100) {
-			// Check if header is fully visible (only applies when header is fixed)
-			const headerFullyVisible = isHeaderFixed && headerTranslateY === 0;
+			// Check if header is fully visible
+			const headerFullyVisible = headerTranslateY === 0;
 
 			if (headerFullyVisible) {
 				// Snap bottom nav to fully visible when header is fully shown
@@ -110,7 +81,6 @@
 			window.dispatchEvent(new CustomEvent('bottomNavVisibilityChange', { detail: { hidden: false } }));
 		}
 
-		wasHeaderFixed = isHeaderFixed;
 		lastScrollY = currentScrollY;
 	}
 
@@ -251,15 +221,11 @@
 	<!-- Fixed status bar overlay -->
 	<div class="status-bar-spacer"></div>
 
-	<!-- In-flow spacer to push content down -->
+	<!-- In-flow spacer to push content down (for status bar + header) -->
 	<div class="status-bar-push"></div>
+	<div class="header-spacer" style="height: {headerHeight}px;"></div>
 
-	<!-- Spacer to reserve header space when it becomes fixed -->
-	{#if isHeaderFixed}
-		<div class="header-spacer" style="height: {headerHeight}px;"></div>
-	{/if}
-
-	<header class="header" class:header-fixed={isHeaderFixed} class:header-frosted={isHeaderFrosted} class:skip-transition={skipTransition} bind:this={headerElement} style="--header-translate-y: {headerTranslateY}px">
+	<header class="header" class:header-frosted={isHeaderFrosted} bind:this={headerElement} style="--header-translate-y: {headerTranslateY}px">
 		<div class="top-bar">
 			<button class="menu-button" onclick={toggleDrawer}>☰</button>
 			<h1>ScrapeNAS</h1>
@@ -408,7 +374,7 @@
 	</main>
 
 	<!-- Bottom Navigation Bar (YouTube style) -->
-	<nav class="bottom-nav" class:snap-visible={bottomNavTranslateY === 0 && isHeaderFixed && headerTranslateY === 0} style="--bottom-nav-translate-y: {bottomNavTranslateY}px; --bottom-nav-opacity: {1 - (bottomNavTranslateY / 56)};">
+	<nav class="bottom-nav" class:snap-visible={bottomNavTranslateY === 0 && headerTranslateY === 0} style="--bottom-nav-translate-y: {bottomNavTranslateY}px; --bottom-nav-opacity: {1 - (bottomNavTranslateY / 56)};">
 		<button class="nav-item active">
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
 				<path d="M9.17 6l2 2H20v10H4V6h5.17M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
@@ -438,6 +404,10 @@
 
 	<!-- Debug Overlay -->
 	<div class="debug-overlay">
+		<div>ScrollY: {Math.round(scrollY)}</div>
+		<div>HeaderHeight: {headerHeight}</div>
+		<div>HeaderTranslateY: {Math.round(headerTranslateY)}</div>
+		<div>---</div>
 		<div>Orientation: {debugInfo.orientation}°</div>
 		<div>Status Bar: {debugInfo.statusBar}px</div>
 		<div>Nav Bottom: {debugInfo.navBar}px</div>
@@ -478,23 +448,12 @@
 	}
 
 	.header {
-		position: relative; /* Default: in normal flow */
-	}
-
-	.header:not(.header-fixed) {
-		transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-	}
-
-	.header-fixed {
 		position: fixed;
 		top: var(--status-bar-height, 0);
 		left: 0;
 		right: 0;
 		z-index: 50;
 		transform: translateY(var(--header-translate-y, 0));
-	}
-
-	.header-fixed:not(.skip-transition) {
 		transition: transform 0.1s linear;
 	}
 
