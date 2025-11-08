@@ -55,7 +55,6 @@
 
 <style>
 	.app-content-area {
-		padding-top: var(--status-bar-height, 0);
 		padding-bottom: var(--nav-bar-height, 0);
 		min-height: 100dvh;
 	}

@@ -69,8 +69,8 @@
 		</nav>
 	</div>
 
+	<div class="status-bar-spacer"></div>
 	<header class="header">
-		<div class="status-bar-spacer"></div>
 		<div class="top-bar">
 			<button class="menu-button" onclick={toggleDrawer}>☰</button>
 			<h1>ScrapeNAS</h1>
@@ -179,20 +179,26 @@
 		min-height: 100%;
 	}
 
-	.header {
+	.status-bar-spacer {
 		position: sticky;
 		top: 0;
-		margin-top: calc(-1 * var(--status-bar-height, 0));
+		height: var(--status-bar-height, 0px);
+		background-color: #000;
 		z-index: 100;
+	}
+
+	/* Hide status bar spacer on web (desktop) */
+	@media (hover: hover) and (pointer: fine) {
+		.status-bar-spacer {
+			display: none;
+		}
+	}
+
+	.header {
 		background-color: rgba(0, 0, 0, 0.75);
 		backdrop-filter: blur(20px) saturate(180%);
 		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-	}
-
-	.status-bar-spacer {
-		height: var(--status-bar-height, 0px);
-		background-color: transparent;
 	}
 
 	.top-bar {
@@ -255,13 +261,6 @@
 	.more-menu svg {
 		width: 20px;
 		height: 20px;
-	}
-
-	/* Web only - remove negative margin when no status bar */
-	@media (hover: hover) and (pointer: fine) {
-		.header {
-			margin-top: 0;
-		}
 	}
 
 	.menu-button {
