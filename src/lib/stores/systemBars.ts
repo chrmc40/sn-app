@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import { SystemBars } from '$lib/plugins/system-bars';
+import { SystemBars } from '$lib/config/system-bars';
 
 export interface SystemBarsData {
 	orientation: number;

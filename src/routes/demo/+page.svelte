@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Modal from '$lib/components/Modal.svelte';
-	import Dropdown from '$lib/components/Dropdown.svelte';
-	import DatePicker from '$lib/components/DatePicker.svelte';
+	import Modal from '$lib/components/ui/Modal.svelte';
+	import Dropdown from '$lib/components/ui/Dropdown.svelte';
+	import DatePicker from '$lib/components/forms/DatePicker.svelte';
 
 	// Lucide icons
 	import {

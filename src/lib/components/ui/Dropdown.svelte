@@ -37,7 +37,8 @@
 	});
 
 	const selectedLabel = $derived(
-		options.find((opt) => opt.value === value)?.label || placeholder
+		options.find((opt: { value: string; label: string }) => opt.value === value)?.label ||
+			placeholder
 	);
 </script>
 

@@ -5,7 +5,7 @@
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { initSystemBars, cleanupSystemBars } from '$lib/stores/systemBars';
-	import SystemBarsOverlay from '$lib/components/SystemBarsOverlay.svelte';
+	import SystemBarsOverlay from '$lib/components/layout/SystemBarsOverlay.svelte';
 
 	let { children } = $props();
 

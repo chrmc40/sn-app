@@ -1,6 +1,6 @@
 <script>
-	import HeadroomHeader from '$lib/components/HeadroomHeader.svelte';
-	import BottomNav from '$lib/components/BottomNav.svelte';
+	import HeadroomHeader from '$lib/components/layout/HeadroomHeader.svelte';
+	import BottomNav from '$lib/components/layout/BottomNav.svelte';
 	import { systemBarsData } from '$lib/stores/systemBars';
 
 	let drawerOpen = $state(false);
