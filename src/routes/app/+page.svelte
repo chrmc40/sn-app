@@ -25,12 +25,47 @@
 	<!-- Drawer -->
 	<div class="drawer" class:open={drawerOpen}>
 		<div class="drawer-header">
-			<h2>Menu</h2>
+			<h2>Admin</h2>
 			<button class="close-button" onclick={closeDrawer}>✕</button>
 		</div>
 		<nav class="drawer-nav">
-			<a href="/app">Home</a>
-			<a href="/demo">Component Demo</a>
+			<a href="/app">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+				</svg>
+				<span>Latest</span>
+			</a>
+			<a href="/demo">
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+					<path d="M9.17 6l2 2H20v10H4V6h5.17M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
+				</svg>
+				<span>Folders</span>
+			</a>
+			<a href="/app">
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 640 640">
+					<path d="M541.4 162.6C549 155 561.7 156.9 565.5 166.9C572.3 184.6 576 203.9 576 224C576 312.4 504.4 384 416 384C398.5 384 381.6 381.2 365.8 376L178.9 562.9C150.8 591 105.2 591 77.1 562.9C49 534.8 49 489.2 77.1 461.1L264 274.2C258.8 258.4 256 241.6 256 224C256 135.6 327.6 64 416 64C436.1 64 455.4 67.7 473.1 74.5C483.1 78.3 484.9 91 477.4 98.6L388.7 187.3C385.7 190.3 384 194.4 384 198.6L384 240C384 248.8 391.2 256 400 256L441.4 256C445.6 256 449.7 254.3 452.7 251.3L541.4 162.6z"/>
+				</svg>
+				<span>Scraper</span>
+			</a>
+			<a href="/app">
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+					<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.583 8.445h.01M10.86 19.71l-6.573-6.63a.993.993 0 0 1 0-1.4l7.329-7.394A.98.98 0 0 1 12.31 4l5.734.007A1.968 1.968 0 0 1 20 5.983v5.5a.992.992 0 0 1-.316.727l-7.44 7.5a.974.974 0 0 1-1.384.001Z" />
+				</svg>
+				<span>Tags</span>
+			</a>
+			<a href="/app">
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+					<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13V4M7 14H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2m-1-5-4 5-4-5m9 8h.01"/>
+				</svg>
+				<span>Downloads</span>
+			</a>
+			<a href="/app">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<circle cx="11" cy="11" r="7" />
+					<line x1="21" y1="21" x2="16.65" y2="16.65" />
+				</svg>
+				<span>Search</span>
+			</a>
 		</nav>
 	</div>
 
@@ -45,22 +80,39 @@
 				</button>
 			</div>
 		</div>
+		<div class="middle-bar">
+			<nav class="breadcrumb">
+				<a href="/app">Folders</a>
+				<span class="separator">›</span>
+				<a href="/app">Wallpapers</a>
+				<span class="separator">›</span>
+				<span class="current">Japan</span>
+			</nav>
+			<button class="more-menu" aria-label="More options">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+					<circle cx="12" cy="5" r="2"></circle>
+					<circle cx="12" cy="12.5" r="2"></circle>
+					<circle cx="12" cy="20" r="2"></circle>
+				</svg>
+			</button>
+		</div>
 	</header>
 
-	<section class="hero">
-		<h2>Scroll to test overlays</h2>
-		<p>Watch how content flows behind Android system bars</p>
-	</section>
+	<main class="page-content">
+		<section class="hero">
+			<h2>Scroll to test overlays</h2>
+			<p>Watch how content flows behind Android system bars</p>
+		</section>
 
-	<section class="card purple">
-		<h3>Purple Section</h3>
-		<p>This is a vibrant purple card with some dummy content to make it taller and more scrollable.</p>
-		<a href="/demo">
-			<button>🎨 View Component Demo</button>
-		</a>
-	</section>
+		<section class="card purple">
+			<h3>Purple Section</h3>
+			<p>This is a vibrant purple card with some dummy content to make it taller and more scrollable.</p>
+			<a href="/demo">
+				<button>🎨 View Component Demo</button>
+			</a>
+		</section>
 
-	<section class="card cyan">
+		<section class="card cyan">
 		<h3>Cyan Dreams</h3>
 		<p>Bright cyan section with contrasting dark text. Perfect for testing visibility.</p>
 		<div class="stats">
@@ -77,48 +129,49 @@
 				<div class="label">Posts</div>
 			</div>
 		</div>
-	</section>
+		</section>
 
-	<section class="card orange">
-		<h3>Orange Energy</h3>
-		<p>Hot orange section bringing the heat. Keep scrolling to see more colors!</p>
-		<div class="progress-bar">
-			<div class="progress" style="width: 65%"></div>
-		</div>
-	</section>
+		<section class="card orange">
+			<h3>Orange Energy</h3>
+			<p>Hot orange section bringing the heat. Keep scrolling to see more colors!</p>
+			<div class="progress-bar">
+				<div class="progress" style="width: 65%"></div>
+			</div>
+		</section>
 
-	<section class="card green">
-		<h3>Green Zone</h3>
-		<p>Calming green area for your eyes. Notice how the nav buttons look against different backgrounds.</p>
-		<ul>
-			<li>Item One</li>
-			<li>Item Two</li>
-			<li>Item Three</li>
-			<li>Item Four</li>
-		</ul>
-	</section>
+		<section class="card green">
+			<h3>Green Zone</h3>
+			<p>Calming green area for your eyes. Notice how the nav buttons look against different backgrounds.</p>
+			<ul>
+				<li>Item One</li>
+				<li>Item Two</li>
+				<li>Item Three</li>
+				<li>Item Four</li>
+			</ul>
+		</section>
 
-	<section class="card pink">
-		<h3>Pink Paradise</h3>
-		<p>Soft pink vibes. Perfect for testing how system UI elements blend with content.</p>
-		<button>Another Button</button>
-	</section>
+		<section class="card pink">
+			<h3>Pink Paradise</h3>
+			<p>Soft pink vibes. Perfect for testing how system UI elements blend with content.</p>
+			<button>Another Button</button>
+		</section>
 
-	<section class="card blue">
-		<h3>Deep Blue</h3>
-		<p>Dark blue ocean of content. Almost at the bottom now!</p>
-		<div class="chip-container">
-			<span class="chip">Design</span>
-			<span class="chip">Mobile</span>
-			<span class="chip">Android</span>
-			<span class="chip">UI/UX</span>
-		</div>
-	</section>
+		<section class="card blue">
+			<h3>Deep Blue</h3>
+			<p>Dark blue ocean of content. Almost at the bottom now!</p>
+			<div class="chip-container">
+				<span class="chip">Design</span>
+				<span class="chip">Mobile</span>
+				<span class="chip">Android</span>
+				<span class="chip">UI/UX</span>
+			</div>
+		</section>
 
-	<footer class="footer">
-		<p>Bottom of the page - test nav bar overlay here</p>
-		<button class="footer-btn">Tap Me</button>
-	</footer>
+		<footer class="footer">
+			<p>Bottom of the page - test nav bar overlay here</p>
+			<button class="footer-btn">Tap Me</button>
+		</footer>
+	</main>
 </div>
 
 <style>
@@ -133,7 +186,7 @@
 		z-index: 100;
 		background-color: rgba(0, 0, 0, 0.75);
 		backdrop-filter: blur(20px) saturate(180%);
-		/* border-bottom: 1px solid rgba(255, 255, 255, 0.1); */
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 	}
 
@@ -147,6 +200,61 @@
 		justify-content: space-between;
 		align-items: center;
 		height: 60px;
+	}
+
+	.middle-bar {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		height: 44px;
+		padding-left: 20px;
+		border-top: 1px solid rgba(255, 255, 255, 0.05);
+	}
+
+	.breadcrumb {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 14px;
+		color: #d4d4d4;
+	}
+
+	.breadcrumb a {
+		color: #d4d4d4;
+		text-decoration: none;
+		transition: color 0.2s ease;
+	}
+
+	.breadcrumb a:hover {
+		color: white;
+	}
+
+	.breadcrumb .separator {
+		color: #d4d4d4;
+		user-select: none;
+	}
+
+	.breadcrumb .current {
+		color: #c89cff;
+		font-weight: 500;
+	}
+
+	.more-menu {
+		all: unset;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 44px;
+		width: 50px;
+		cursor: pointer;
+		color: #888;
+		flex-shrink: 0;
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	.more-menu svg {
+		width: 20px;
+		height: 20px;
 	}
 
 	/* Web only - remove negative margin when no status bar */
@@ -165,6 +273,8 @@
 		height: 60px;
 		font-size: 24px;
 		cursor: pointer;
+		-webkit-tap-highlight-color: transparent;
+		color: #cfa9ff;
 	}
 
 	.user-avatar {
@@ -176,6 +286,7 @@
 		justify-content: center;
 		cursor: pointer;
 		flex-shrink: 0;
+		-webkit-tap-highlight-color: transparent;
 	}
 
 	.avatar-circle {
@@ -195,6 +306,10 @@
 		margin: 0;
 		font-size: 20px;
 		padding-right: 10px; /* Visual alignment fix - text doesn't optically center well in CSS */
+		background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
 	}
 
 	.status-icons {
@@ -436,11 +551,20 @@
 	}
 
 	.drawer-nav a {
+		display: flex;
+		align-items: center;
+		gap: 12px;
 		padding: 16px 20px;
 		color: #ccc;
 		text-decoration: none;
 		font-size: 16px;
 		transition: background-color 0.2s ease, color 0.2s ease;
+	}
+
+	.drawer-nav a svg {
+		width: 20px;
+		height: 20px;
+		flex-shrink: 0;
 	}
 
 	.drawer-nav a:hover {
