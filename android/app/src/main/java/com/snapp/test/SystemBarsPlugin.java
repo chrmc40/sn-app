@@ -95,12 +95,33 @@ public class SystemBarsPlugin extends Plugin {
                         navBarSide = "bottom";
                     }
                     result.put("navBarSide", navBarSide);
+
+                    // Get display cutout information
+                    android.view.DisplayCutout cutout = insets.getDisplayCutout();
+                    if (cutout != null) {
+                        result.put("notch", true);
+                        result.put("notchTop", cutout.getSafeInsetTop());
+                        result.put("notchBottom", cutout.getSafeInsetBottom());
+                        result.put("notchLeft", cutout.getSafeInsetLeft());
+                        result.put("notchRight", cutout.getSafeInsetRight());
+                    } else {
+                        result.put("notch", false);
+                        result.put("notchTop", 0);
+                        result.put("notchBottom", 0);
+                        result.put("notchLeft", 0);
+                        result.put("notchRight", 0);
+                    }
                 } else {
                     result.put("statusBar", 0);
                     result.put("navigationBar", 0);
                     result.put("navBarLeft", 0);
                     result.put("navBarRight", 0);
                     result.put("navBarSide", "bottom");
+                    result.put("notch", false);
+                    result.put("notchTop", 0);
+                    result.put("notchBottom", 0);
+                    result.put("notchLeft", 0);
+                    result.put("notchRight", 0);
                 }
             } else {
                 // Fallback for older Android versions
@@ -124,6 +145,11 @@ public class SystemBarsPlugin extends Plugin {
                 result.put("navBarLeft", 0);
                 result.put("navBarRight", 0);
                 result.put("navBarSide", "bottom");
+                result.put("notch", false);
+                result.put("notchTop", 0);
+                result.put("notchBottom", 0);
+                result.put("notchLeft", 0);
+                result.put("notchRight", 0);
             }
 
             call.resolve(result);

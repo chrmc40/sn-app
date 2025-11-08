@@ -8,6 +8,11 @@ export interface SystemBarsPlugin {
 		navBarRight: number;
 		orientation: number;
 		navBarSide: 'left' | 'right' | 'bottom';
+		notch: boolean;
+		notchTop: number;
+		notchBottom: number;
+		notchLeft: number;
+		notchRight: number;
 	}>;
 	addListener(
 		eventName: 'configurationChanged',

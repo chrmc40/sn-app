@@ -31,28 +31,41 @@
 				const navBarBottom = data.navigationBar / dpr;
 				const navBarLeft = data.navBarLeft / dpr;
 				const navBarRight = data.navBarRight / dpr;
+				const notchLeft = data.notchLeft / dpr;
+				const notchRight = data.notchRight / dpr;
 
 				document.documentElement.style.setProperty('--status-bar-height', `${statusBarHeight}px`);
 				document.documentElement.style.setProperty('--nav-bar-bottom', `${navBarBottom}px`);
 
-				// Set side-specific variables based on which side the nav bar is on
+				// Calculate total side padding (nav bar + notch on opposite sides)
+				// In landscape, notch and nav buttons are always on opposite sides
+				let totalLeft = 0;
+				let totalRight = 0;
+
 				if (data.navBarSide === 'left') {
-					document.documentElement.style.setProperty('--nav-bar-left', `${navBarLeft}px`);
-					document.documentElement.style.setProperty('--nav-bar-right', '0px');
+					totalLeft = navBarLeft;
+					totalRight = notchRight; // Notch on opposite side
 				} else if (data.navBarSide === 'right') {
-					document.documentElement.style.setProperty('--nav-bar-left', '0px');
-					document.documentElement.style.setProperty('--nav-bar-right', `${navBarRight}px`);
+					totalLeft = notchLeft; // Notch on opposite side
+					totalRight = navBarRight;
 				} else {
-					// Bottom - no side padding
-					document.documentElement.style.setProperty('--nav-bar-left', '0px');
-					document.documentElement.style.setProperty('--nav-bar-right', '0px');
+					// Portrait mode - no side padding (status bar covers notch)
+					totalLeft = 0;
+					totalRight = 0;
 				}
+
+				document.documentElement.style.setProperty('--nav-bar-left', `${totalLeft}px`);
+				document.documentElement.style.setProperty('--nav-bar-right', `${totalRight}px`);
 
 				console.log('System bars updated:', {
 					statusBar: statusBarHeight,
 					navBottom: navBarBottom,
 					navLeft: navBarLeft,
 					navRight: navBarRight,
+					notchLeft: notchLeft,
+					notchRight: notchRight,
+					totalLeft: totalLeft,
+					totalRight: totalRight,
 					side: data.navBarSide
 				});
 			} catch (error) {

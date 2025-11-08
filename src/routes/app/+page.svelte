@@ -9,7 +9,12 @@
 		navBar: 0,
 		navBarLeft: 0,
 		navBarRight: 0,
-		navBarSide: 'bottom'
+		navBarSide: 'bottom',
+		notch: false,
+		notchTop: 0,
+		notchBottom: 0,
+		notchLeft: 0,
+		notchRight: 0
 	});
 
 	function toggleDrawer() {
@@ -131,7 +136,12 @@
 					navBar: Math.round(data.navigationBar / dpr),
 					navBarLeft: Math.round(data.navBarLeft / dpr),
 					navBarRight: Math.round(data.navBarRight / dpr),
-					navBarSide: data.navBarSide
+					navBarSide: data.navBarSide,
+					notch: data.notch,
+					notchTop: Math.round(data.notchTop / dpr),
+					notchBottom: Math.round(data.notchBottom / dpr),
+					notchLeft: Math.round(data.notchLeft / dpr),
+					notchRight: Math.round(data.notchRight / dpr)
 				};
 
 				console.log('System bars data:', data);
@@ -434,6 +444,9 @@
 		<div>Nav Left: {debugInfo.navBarLeft}px</div>
 		<div>Nav Right: {debugInfo.navBarRight}px</div>
 		<div>Nav Side: {debugInfo.navBarSide}</div>
+		<div>Notch: {debugInfo.notch ? 'True' : 'False'}</div>
+		<div>Notch Left: {debugInfo.notchLeft}px</div>
+		<div>Notch Right: {debugInfo.notchRight}px</div>
 	</div>
 </div>
 
