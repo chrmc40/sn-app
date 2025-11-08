@@ -30,7 +30,7 @@
 
 		scrollY = currentScrollY;
 
-		// Apply frosted effect when scrolled
+		// Apply frosted effect when scrolled past 10px
 		isHeaderFrosted = currentScrollY >= 10;
 
 		// Track if header just became fixed
@@ -57,7 +57,7 @@
 			}
 		}
 		// Snap back to relative only when at the very top
-		else if (currentScrollY <= 1) {
+		else if (currentScrollY === 0) {
 			isHeaderFixed = false;
 			isHeaderHidden = false; // Always visible when not fixed
 		}
@@ -443,10 +443,15 @@
 		transform: translateY(-100%);
 	}
 
-	.header-frosted {
+	.header-frosted .top-bar {
 		backdrop-filter: blur(20px) saturate(180%);
-		background-color: rgba(22, 23, 24, 0.8);
-		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+		background-color: rgba(22, 23, 24, 0.8) !important;
+	}
+
+	.header-frosted .middle-bar {
+		backdrop-filter: blur(20px) saturate(180%);
+		background-color: rgba(26, 27, 28, 0.8);
+		/* border-bottom: 1px solid rgba(255, 255, 255, 0.1); */
 	}
 
 	.top-bar {
@@ -454,6 +459,8 @@
 		justify-content: space-between;
 		align-items: center;
 		height: 60px;
+		background-color: #161718;
+		transition: backdrop-filter 0.3s ease, background-color 0.3s ease;
 	}
 
 	.middle-bar {
@@ -462,7 +469,9 @@
 		align-items: center;
 		height: 44px;
 		padding-left: 20px;
+		background-color: #1a1b1c;
 		border-top: 1px solid rgba(255, 255, 255, 0.05);
+		transition: backdrop-filter 0.3s ease, background-color 0.3s ease;
 	}
 
 	.breadcrumb {
