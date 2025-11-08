@@ -21,24 +21,53 @@
 		};
 	});
 
-	onMount(async () => {
-		// Get system bar heights and inject as CSS variables
+	async function updateSystemBarVars() {
 		if ((window as any).Capacitor?.isNativePlatform?.()) {
 			try {
-				const heights = await SystemBars.getHeights();
+				const data = await SystemBars.getHeights();
 				// Convert from physical pixels to CSS pixels using device pixel ratio
 				const dpr = window.devicePixelRatio || 1;
-				const statusBarHeight = heights.statusBar / dpr;
-				const navBarHeight = heights.navigationBar / dpr;
+				const statusBarHeight = data.statusBar / dpr;
+				const navBarBottom = data.navigationBar / dpr;
+				const navBarLeft = data.navBarLeft / dpr;
+				const navBarRight = data.navBarRight / dpr;
 
 				document.documentElement.style.setProperty('--status-bar-height', `${statusBarHeight}px`);
-				document.documentElement.style.setProperty('--nav-bar-height', `${navBarHeight}px`);
+				document.documentElement.style.setProperty('--nav-bar-bottom', `${navBarBottom}px`);
+				document.documentElement.style.setProperty('--nav-bar-left', `${navBarLeft}px`);
+				document.documentElement.style.setProperty('--nav-bar-right', `${navBarRight}px`);
+				document.documentElement.style.setProperty('--nav-bar-side', data.navBarSide);
 
-				console.log('Status bar height (px):', heights.statusBar, '→ CSS px:', statusBarHeight);
-				console.log('Nav bar height (px):', heights.navigationBar, '→ CSS px:', navBarHeight);
+				console.log('System bars updated:', {
+					statusBar: statusBarHeight,
+					navBottom: navBarBottom,
+					navLeft: navBarLeft,
+					navRight: navBarRight,
+					side: data.navBarSide
+				});
 			} catch (error) {
 				console.error('Failed to get system bar heights:', error);
 			}
+		}
+	}
+
+	let configListener;
+
+	onMount(async () => {
+		// Get system bar heights and inject as CSS variables
+		await updateSystemBarVars();
+
+		// Listen for configuration changes
+		if ((window as any).Capacitor?.isNativePlatform?.()) {
+			configListener = await SystemBars.addListener('configurationChanged', async () => {
+				console.log('Configuration changed - updating system bar CSS vars');
+				await updateSystemBarVars();
+			});
+		}
+	});
+
+	onMount(async () => {
+		if ((window as any).Capacitor?.isNativePlatform?.()) {
 
 			// Handle Android back button
 			const { App } = await import('@capacitor/app');
@@ -69,7 +98,7 @@
 
 <style>
 	.app-content-area {
-		padding-bottom: calc(56px + var(--nav-bar-height, 0px));
+		padding-bottom: calc(56px + var(--nav-bar-bottom, 0px));
 		min-height: 100dvh;
 	}
 
@@ -78,7 +107,7 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
-		height: calc(56px + var(--nav-bar-height, 0px));
+		height: calc(56px + var(--nav-bar-bottom, 0px));
 		backdrop-filter: blur(20px) saturate(180%);
 		background-color: rgba(0, 0, 0, 0.75);
 		z-index: 9999;
@@ -87,7 +116,7 @@
 	}
 
 	.mobile-nav-bar.nav-icons-hidden {
-		height: var(--nav-bar-height, 0px);
+		height: var(--nav-bar-bottom, 0px);
 	}
 
 	/* Hide on web */

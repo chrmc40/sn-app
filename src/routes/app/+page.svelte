@@ -1,7 +1,16 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
+	import { SystemBars } from '$lib/plugins/system-bars';
 
 	let drawerOpen = $state(false);
+	let debugInfo = $state({
+		orientation: 0,
+		statusBar: 0,
+		navBar: 0,
+		navBarLeft: 0,
+		navBarRight: 0,
+		navBarSide: 'bottom'
+	});
 
 	function toggleDrawer() {
 		drawerOpen = !drawerOpen;
@@ -110,9 +119,62 @@
 		}
 	});
 
+	async function updateSystemBars() {
+		if (window.Capacitor?.isNativePlatform?.()) {
+			try {
+				const data = await SystemBars.getHeights();
+				const dpr = window.devicePixelRatio || 1;
+
+				debugInfo = {
+					orientation: data.orientation,
+					statusBar: Math.round(data.statusBar / dpr),
+					navBar: Math.round(data.navigationBar / dpr),
+					navBarLeft: Math.round(data.navBarLeft / dpr),
+					navBarRight: Math.round(data.navBarRight / dpr),
+					navBarSide: data.navBarSide
+				};
+
+				console.log('System bars data:', data);
+				console.log('Debug info:', debugInfo);
+			} catch (error) {
+				console.error('Failed to get system bar heights:', error);
+			}
+		}
+	}
+
+	let configListener;
+
+	onMount(async () => {
+		// Get initial orientation and system bar info
+		await updateSystemBars();
+
+		// Listen for Android configuration changes (proper hook)
+		if (window.Capacitor?.isNativePlatform?.()) {
+			configListener = await SystemBars.addListener('configurationChanged', async () => {
+				console.log('Configuration changed - updating system bars');
+				await updateSystemBars();
+			});
+		} else {
+			// Fallback for web/browser
+			if (window.screen?.orientation) {
+				window.screen.orientation.addEventListener('change', updateSystemBars);
+			}
+			window.addEventListener('resize', updateSystemBars);
+		}
+	});
+
 	onDestroy(() => {
 		if (typeof window !== 'undefined') {
 			window.removeEventListener('scroll', handleScroll);
+
+			if (configListener) {
+				configListener.remove();
+			} else {
+				window.removeEventListener('resize', updateSystemBars);
+				if (window.screen?.orientation) {
+					window.screen.orientation.removeEventListener('change', updateSystemBars);
+				}
+			}
 		}
 	});
 </script>
@@ -363,6 +425,16 @@
 			<span>Downloads</span>
 		</button>
 	</nav>
+
+	<!-- Debug Overlay -->
+	<div class="debug-overlay">
+		<div>Orientation: {debugInfo.orientation}°</div>
+		<div>Status Bar: {debugInfo.statusBar}px</div>
+		<div>Nav Bottom: {debugInfo.navBar}px</div>
+		<div>Nav Left: {debugInfo.navBarLeft}px</div>
+		<div>Nav Right: {debugInfo.navBarRight}px</div>
+		<div>Nav Side: {debugInfo.navBarSide}</div>
+	</div>
 </div>
 
 <style>
@@ -826,13 +898,13 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
-		height: calc(56px + var(--nav-bar-height, 0px));
+		height: calc(56px + var(--nav-bar-bottom, 0px));
 		background-color: transparent;
 		display: flex;
 		justify-content: space-around;
 		align-items: flex-start;
 		padding-top: 8px;
-		padding-bottom: var(--nav-bar-height, 0px);
+		padding-bottom: var(--nav-bar-bottom, 0px);
 		z-index: 10000;
 		transform: translateY(var(--bottom-nav-translate-y, 0));
 		opacity: var(--bottom-nav-opacity, 1);
@@ -890,5 +962,25 @@
 		.user-avatar {
 			min-width: 65px; /* 60px visual + 5px right padding absorbed from top-bar on mobile */
 		}
+	}
+
+	/* Debug Overlay */
+	.debug-overlay {
+		position: fixed;
+		top: 100px;
+		right: 10px;
+		background: yellow;
+		color: red;
+		padding: 10px;
+		border-radius: 8px;
+		font-family: monospace;
+		font-size: 12px;
+		font-weight: bold;
+		z-index: 99999;
+		pointer-events: none;
+	}
+
+	.debug-overlay div {
+		margin: 2px 0;
 	}
 </style>
