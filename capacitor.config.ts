@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.snapp.test',
-  appName: 'SN App',
+  appId: 'com.scrapenas.app',
+  appName: 'ScrapeNAS',
   webDir: 'build'
 };
 

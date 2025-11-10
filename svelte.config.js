@@ -6,7 +6,14 @@ const config = {
 	preprocess: vitePreprocess(),
 
 	kit: {
-		adapter: adapter()
+		adapter: adapter({
+			// For Capacitor - static output
+			pages: 'build',
+			assets: 'build',
+			fallback: undefined,
+			precompress: false,
+			strict: true
+		})
 	}
 };
 

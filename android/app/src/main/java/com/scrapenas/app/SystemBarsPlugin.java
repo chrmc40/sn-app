@@ -1,4 +1,4 @@
-package com.snapp.test;
+package com.scrapenas.app;
 
 import android.content.Context;
 import android.content.res.Configuration;

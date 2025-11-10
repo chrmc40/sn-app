@@ -1,7 +1,12 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
+	import { page } from '$app/stores';
 
 	let isBottomNavHidden = $state(false);
+	let currentPath = $derived($page.url.pathname);
+
+	// Hide bottom nav overlay on setup page (fullscreen pages)
+	let hideOverlay = $derived(currentPath === '/setup');
 
 	function handleBottomNavVisibilityChange(e: CustomEvent) {
 		isBottomNavHidden = e.detail.hidden;
@@ -27,7 +32,7 @@
 </script>
 
 <!-- Android navigation bar overlays (frosted glass) -->
-<div class="mobile-nav-bar" class:nav-icons-hidden={isBottomNavHidden}></div>
+<div class="mobile-nav-bar" class:nav-icons-hidden={isBottomNavHidden || hideOverlay}></div>
 <div class="mobile-nav-bar-left"></div>
 <div class="mobile-nav-bar-right"></div>
 

@@ -5,6 +5,8 @@
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { initSystemBars, cleanupSystemBars } from '$lib/stores/systemBars';
+	import { initializeApp } from '$lib/utils/startup';
+	import { appState } from '$lib/stores/appState';
 	import SystemBarsOverlay from '$lib/components/layout/SystemBarsOverlay.svelte';
 
 	let { children } = $props();
@@ -12,8 +14,20 @@
 	onMount(async () => {
 		if (!browser) return;
 
+		// Initialize app (platform detection, storage config, etc.)
+		const isConfigured = await initializeApp();
+
 		// Initialize system bars detection and CSS variables
 		await initSystemBars();
+
+		// Route to setup if not configured
+		const currentPath = window.location.pathname;
+		if (!isConfigured && currentPath !== '/setup') {
+			goto('/setup');
+		} else if (isConfigured && currentPath === '/setup') {
+			// Already configured but on setup page - redirect to app
+			goto('/app');
+		}
 
 		// Handle Android back button
 		if ((window as any).Capacitor?.isNativePlatform?.()) {
@@ -22,6 +36,9 @@
 				const currentPath = window.location.pathname;
 
 				if (currentPath === '/' || currentPath === '/app') {
+					App.exitApp();
+				} else if (currentPath === '/setup') {
+					// On setup page - exit app instead of going back
 					App.exitApp();
 				} else {
 					goto('/app');
